@@ -49,7 +49,7 @@ public class FuzzyAgent extends Agent implements RocketListener {
         FuzzySet up=new TriangleFuzzySet(mvRange,"上昇する",1,2,4);
         FuzzySet upFast=new TriangleFuzzySet(mvRange,"急いで上昇する",3.5,5,5);
 
-        fuzzyRules=new FuzzyInterface1(mvValues,relation.getPreferredCombinationModeBetweenRules());
+        fuzzyRules=new FuzzyInterface1(mvValues,FuzzyInterface1.RULES_MULT_COMBINATION);
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isMuchPositive),upFast,relation.create()));
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isWellPositive),up,relation.create()));
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isLittlePositive),upALittle,relation.create()));
