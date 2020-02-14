@@ -1,5 +1,6 @@
 package view;
 
+import agent.FuzzyAgent;
 import agent.PIDAgent;
 import rocketenv.Rocket;
 import rocketenv.Space;
@@ -35,10 +36,15 @@ public class MasterView extends JFrame implements ActionListener, MouseListener,
         vToolsBar.add(vPanic);
         add(vToolsBar,BorderLayout.NORTH);
 
-        Rocket mPIDRocket = new Rocket(-3, 1,10, "PIDRocket");
-        PIDAgent mPIDAgent = new PIDAgent(mPIDRocket, mSpace);
-        new PIDAgentView(mPIDAgent, this);
-        setRocket(mPIDRocket);
+        /*
+        ロケットとそのエージェントの起動
+         */
+        Rocket myRocket = new Rocket(-3, 1,10, "MyRocket");
+        //PIDAgent mPIDAgent = new PIDAgent(myRocket, mSpace);
+        //new PIDAgentView(mPIDAgent, this);
+        FuzzyAgent mFuzzyAgent=new FuzzyAgent(myRocket,mSpace);
+        new FuzzyAgentView(mFuzzyAgent,this);
+        setRocket(myRocket);
 
         pack();
         componentResized(null);//linearRocketenvAndViewを生成する。
