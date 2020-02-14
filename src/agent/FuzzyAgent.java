@@ -5,6 +5,7 @@ import fuzzy.Rule;
 import fuzzy.fuzzyinterface.FuzzyInterface1;
 import fuzzy.relationmodel.RelationModelFactory;
 import fuzzy.set.FuzzySet;
+import fuzzy.set.TrapezoidFuzzySet;
 import fuzzy.set.TriangleFuzzySet;
 import rocketenv.Rocket;
 import rocketenv.RocketListener;
@@ -26,31 +27,39 @@ public class FuzzyAgent extends Agent implements RocketListener {
         errorRange=new FuzzySet.Range(-5,5);
         error =new InputValue("エラー",0);
         //前件部のファジィ集合「エラーが・・・」
-        FuzzySet isMuchPositive=new TriangleFuzzySet(errorRange,"正方向にとても大きい",2,5,5);
-        FuzzySet isWellPositive=new TriangleFuzzySet(errorRange,"正方向にやや大きい",0,3,5);
-        FuzzySet isLittlePositive=new TriangleFuzzySet(errorRange,"正方向に少しだけ",0,1,3);
-        FuzzySet isLittleNegative=new TriangleFuzzySet(errorRange,"負方向に少しだけ",-3,-1,0);
-        FuzzySet isWellNegative=new TriangleFuzzySet(errorRange,"負方向にやや大きい",-5,-3,0);
-        FuzzySet isMuchNegative=new TriangleFuzzySet(errorRange,"負方向にとても大きい",-5,-5,2);
+        FuzzySet isMuchPositive=new TrapezoidFuzzySet(errorRange,"正方向にとても大きい",2,3,4,5);
+        FuzzySet isWellPositive=new TriangleFuzzySet(errorRange,"正方向にやや大きい",1,2.5,4);
+        FuzzySet isLittlePositive=new TriangleFuzzySet(errorRange,"正方向に少しだけ",0,0.7,1.4);
+        FuzzySet isLittleLittlePositive=new TriangleFuzzySet(errorRange,"正方向にほんの少しだけ",0,0,0.1);
+        FuzzySet isLittlelittleNegative=new TriangleFuzzySet(errorRange,"負方向にほんの少しだけ",-0.1,0,0);
+        FuzzySet isLittleNegative=new TriangleFuzzySet(errorRange,"負方向に少しだけ",-1.4,-0.7,0);
+        FuzzySet isWellNegative=new TriangleFuzzySet(errorRange,"負方向にやや大きい",-4,-2.5,-1);
+        FuzzySet isMuchNegative=new TrapezoidFuzzySet(errorRange,"負方向にとても大きい",-5,-4,-3,-2);
 
         FuzzySet.Range mvRange=new FuzzySet.Range(-5,5);
         List<Double> mvValues=new ArrayList<>();
-        for(double mv=mvRange.min;mv<=mvRange.max;mv+=0.5)mvValues.add(mv);
+        for(double mv=mvRange.min;mv<=mvRange.max;mv+=0.1)mvValues.add(mv);
         //後件部のファジィ集合
-        FuzzySet downFast=new TriangleFuzzySet(mvRange,"急いで降下する",-5,-5,-3);
+        FuzzySet downFast=new TriangleFuzzySet(mvRange,"急いで降下する",-5,-5,-3.5);
         FuzzySet down=new TriangleFuzzySet(mvRange,"降下する",-4,-2,-1);
-        FuzzySet downALittle=new TriangleFuzzySet(mvRange,"ゆっくり降下する",-2,-1,0);
-        FuzzySet upALittle=new TriangleFuzzySet(mvRange,"ゆっくり上昇する",0,1,2);
+        FuzzySet downALittle=new TriangleFuzzySet(mvRange,"ゆっくり降下する",-1,-0.5,0);
+        FuzzySet downALittleLittle=new TriangleFuzzySet(mvRange,"ほんの少し降下する",-0.1,0,0);
+        FuzzySet upALittleLittle=new TriangleFuzzySet(mvRange,"ほんの少し上昇する",0,0,0.1);
+        FuzzySet upALittle=new TriangleFuzzySet(mvRange,"ゆっくり上昇する",0,0.5,1);
         FuzzySet up=new TriangleFuzzySet(mvRange,"上昇する",1,2,4);
-        FuzzySet upFast=new TriangleFuzzySet(mvRange,"急いで上昇する",3,5,5);
+        FuzzySet upFast=new TriangleFuzzySet(mvRange,"急いで上昇する",3.5,5,5);
 
         fuzzyRules=new FuzzyInterface1(mvValues,relation.getPreferredCombinationModeBetweenRules());
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isMuchPositive),upFast,relation.create()));
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isWellPositive),up,relation.create()));
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isLittlePositive),upALittle,relation.create()));
+        fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isLittleLittlePositive),upALittleLittle,relation.create()));
+        fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isLittlelittleNegative),downALittleLittle,relation.create()));
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isLittleNegative),downALittle,relation.create()));
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isWellNegative),down,relation.create()));
         fuzzyRules.addRule(new Rule(new AntecedentThesis(error,isMuchNegative),downFast,relation.create()));
+
+        System.out.println(fuzzyRules.toString());
 
         mRocket.addCarListener(this);
         onRocketRan(0.1);

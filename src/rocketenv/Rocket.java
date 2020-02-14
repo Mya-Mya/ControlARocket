@@ -28,11 +28,9 @@ public class Rocket {
     /**
      * ロケットを生成する
      * @param pv ロケットの初期位置[N]
-     * @param mass ロケットの質量[kg]
-     * @param mvMax エンジン出力の最大値[N]
      * @param name
      */
-    public Rocket(double pv, double mass,double mvMax, String name) {
+    public Rocket(double pv, String name) {
         mRocketListenerList = new ArrayList<>();
         setPV(pv);
         pv0=pv;
